@@ -26,6 +26,8 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Map
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Person
+import androidx.navigation.navArgument
+import androidx.navigation.NavType
 internal val logger: SkipLogger = SkipLogger(subsystem = "complex.skip.app", category = "ComplexSkipApp")
 
 private typealias AppDelegate = ComplexSkipAppAppDelegate
@@ -164,6 +166,25 @@ internal fun CustomNavigationRoot() {
                 composable("booking/{carId}") { backStackEntry ->
                     val carId = backStackEntry.arguments?.getString("carId")
                     BookingScreen(viewModel = viewModel, navController = navController, carId = carId)
+                }
+                composable(
+                    route = "booking/{carId}?color={color}&insurance={insurance}",
+                    arguments = listOf(
+                        navArgument("color") { type = NavType.StringType; nullable = true },
+                        navArgument("insurance") { type = NavType.StringType; nullable = true }
+                    )
+                ) { backStackEntry ->
+                    val carId = backStackEntry.arguments?.getString("carId")
+                    val colorName = backStackEntry.arguments?.getString("color")
+                    val insuranceType = backStackEntry.arguments?.getString("insurance")
+
+                    BookingScreen(
+                        viewModel = viewModel,
+                        navController = navController,
+                        carId = carId,
+                        initialColorName = colorName,
+                        initialInsuranceType = insuranceType
+                    )
                 }
             }
         }

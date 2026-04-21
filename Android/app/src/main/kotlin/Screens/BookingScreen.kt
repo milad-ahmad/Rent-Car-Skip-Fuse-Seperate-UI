@@ -47,7 +47,9 @@ data class PromoCode(
 fun BookingScreen(
     viewModel: RentalViewModel,
     navController: NavController,
-    carId: String?
+    carId: String?,
+    initialColorName: String? = null,
+    initialInsuranceType: String? = null
 ) {
     val car = remember(carId) { viewModel.allCars.find { it.id.toString() == carId } }
     if (car == null) {
@@ -62,8 +64,6 @@ fun BookingScreen(
     var endDate by remember { mutableStateOf(now.addingTimeInterval(3 * 24 * 60 * 60.0)) }
     var pickupTime by remember { mutableStateOf("10:00 AM") }
     var returnTime by remember { mutableStateOf("10:00 AM") }
-    var selectedColor by remember { mutableStateOf(car.colorOptions.firstOrNull() ?: CarColor("", "", 0.0)) }
-    var selectedInsurance by remember { mutableStateOf<InsuranceOption?>(null) }
     var selectedPaymentMethod by remember { mutableStateOf(viewModel.currentUser?.paymentMethods?.firstOrNull { it.isDefault }) }
     var agreeToTerms by remember { mutableStateOf(false) }
     var promoCode by remember { mutableStateOf("") }
@@ -74,6 +74,20 @@ fun BookingScreen(
     val rentalDays = remember(startDate, endDate) {
         val diffSeconds = endDate.timeIntervalSince1970 - startDate.timeIntervalSince1970
         (diffSeconds / (60 * 60 * 24)).toInt().coerceAtLeast(1)
+    }
+
+    var selectedColor by remember {
+        mutableStateOf(
+            car.colorOptions.toList().find { it.name == initialColorName }
+                ?: car.colorOptions.firstOrNull()
+                ?: CarColor("", "", 0.0)
+        )
+    }
+
+    var selectedInsurance by remember {
+        mutableStateOf(
+            car.insuranceOptions.toList().find { it.type.name == initialInsuranceType }
+        )
     }
 
     val subtotal = car.pricePerDay * rentalDays

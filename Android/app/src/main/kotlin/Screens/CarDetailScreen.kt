@@ -59,11 +59,11 @@ fun CarDetailScreen(
     var selectedInsurance by remember { mutableStateOf<InsuranceOption?>(null) }
     var showImageGallery by remember { mutableStateOf(false) }
     var showBookingSheet by remember { mutableStateOf(false) }
-
+    val displayPricePerDay = car.pricePerDay + (selectedInsurance?.pricePerDay ?: 0.0)
     Scaffold(
         bottomBar = {
             BottomBookingBar(
-                pricePerDay = car.pricePerDay,
+                pricePerDay = displayPricePerDay,
                 selectedColorName = selectedColor?.name,
                 onBookNow = { showBookingSheet = true }
             )
@@ -292,21 +292,30 @@ fun CarDetailScreen(
     if (showBookingSheet) {
         LaunchedEffect(Unit) {
             showBookingSheet = false
-            navController.navigate("booking/${car.id}")
+
+            val colorParam = selectedColor?.name?.let { "color=${android.net.Uri.encode(it)}" } ?: ""
+            val insuranceParam = selectedInsurance?.type?.name?.let { "insurance=${android.net.Uri.encode(it)}" } ?: ""
+            val queryParams = listOf(colorParam, insuranceParam).filter { it.isNotEmpty() }.joinToString("&")
+
+            val route = if (queryParams.isNotEmpty()) "booking/${car.id}?$queryParams" else "booking/${car.id}"
+
+            navController.navigate(route)
         }
     }
 }
 
 // ---------- Components ----------
 
+/**
+ * Renders the image gallery carousel for the car details.
+ */
 @Composable
 fun ImageGalleryCarousel(images: List<String>, onImageTap: () -> Unit) {
     var currentIndex by remember { mutableIntStateOf(0) }
     Box(modifier = Modifier.height(300.dp).fillMaxWidth()) {
         if (images.isNotEmpty()) {
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current).data(images[currentIndex]).build(),
-                contentDescription = null,
+            AppImage(
+                source = images[currentIndex],
                 modifier = Modifier
                     .fillMaxSize()
                     .clickable { onImageTap() },
@@ -487,6 +496,9 @@ fun ReviewCard(name: String, rating: Double, date: String, text: String) {
     }
 }
 
+/**
+ * Card displaying a similar car option.
+ */
 @Composable
 fun SimilarCarCard(car: Car, onClick: () -> Unit) {
     Card(
@@ -495,9 +507,8 @@ fun SimilarCarCard(car: Car, onClick: () -> Unit) {
         colors = CardDefaults.cardColors(containerColor = SurfacePrimary)
     ) {
         Column {
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current).data(car.images.firstOrNull()).build(),
-                contentDescription = null,
+            AppImage(
+                source = car.images.firstOrNull(),
                 modifier = Modifier.height(100.dp).fillMaxWidth(),
                 contentScale = ContentScale.Crop
             )
@@ -559,9 +570,8 @@ fun FullScreenImageGallery(images: List<String>, onDismiss: () -> Unit) {
         dragHandle = null
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current).data(images[currentIndex]).build(),
-                contentDescription = null,
+            AppImage(
+                source = images[currentIndex],
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Fit
             )
