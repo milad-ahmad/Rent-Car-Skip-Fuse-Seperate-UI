@@ -44,4 +44,4 @@ Instructions to build and run the app locally.
 * Google maps is not implemented yet in the Android version. 
 
 **Open Questions for Reviewers:**
-* []
+* https://icthva-my.sharepoint.com/:w:/g/personal/milad_ahmad_hva_nl/IQDIcWrRQz5mQaaXud5vzZerAZPkIX9cEonXKThuU7LzUgs?e=uENibx
