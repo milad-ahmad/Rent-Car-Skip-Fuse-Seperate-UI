@@ -4,7 +4,7 @@
 This is an overview of the current proof-of-concepts (PoCs) developed to validate Skip's functionality.
 
 * **[Rent a car App Skip Fuse]**
-    * *Description:* This project uses Skip Fuse to translate the business logic to Kotlin. This means that the business logic is natively compiled to binary code and shared between both platforms. The UI is seperate for both iOS and Android. All the iOS and shared code is in the Sources folder. All the Android code is in the Android folder which you can open separately in Android studio.
+    * *Description:* This project uses Skip Fuse to translate the business logic to Kotlin. This means that the business logic is natively compiled to binary code and shared between both platforms. The UI is seperate for both iOS and Android. All the iOS and shared code is in the Sources folder. All the Android code is in the Android folder which you can open separately in Android studio. You can find all the generated Kotlin code in the skipstone folder in Android Studio.
 
 ## 2. Architecture: Shared vs. Platform-Specific Code
 The project uses the Skip native compiler to maintain a shared codebase.
